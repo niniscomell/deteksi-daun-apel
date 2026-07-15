@@ -1,0 +1,36 @@
+# Environment & cache
+venv/
+__pycache__/
+*.pyc
+
+# Data & folder besar
+dataset/
+archive/
+recup_dir*/
+static/uploads/*
+ujidaun/
+
+# Dokumen & laporan (tidak dibutuhkan aplikasi)
+*.docx
+*.pdf
+~$*.docx
+
+# Notebook & script training (bukan bagian aplikasi web)
+train.ipynb
+train.py
+import os.txt
+
+# Installer & tools eksternal
+Graphviz/
+*.exe
+templates.zip
+
+# Gambar hasil training/dokumentasi
+akurasi.png
+confusion.png
+loss.png
+arsitektur_model.png
+arsitektur_model_baru.png
+
+# VS Code
+.vscode/
