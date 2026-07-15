@@ -1,11 +1,5 @@
 from flask import Flask, render_template, request
-import tensorflow as tf
-
-# Kurangi penggunaan RAM/CPU TensorFlow di server
-tf.config.threading.set_intra_op_parallelism_threads(1)
-tf.config.threading.set_inter_op_parallelism_threads(1)
-
-from tensorflow.keras.models import load_model
+from tensorflow.lite.python.interpreter import Interpreter
 from tensorflow.keras.preprocessing import image
 from werkzeug.utils import secure_filename
 
@@ -18,22 +12,32 @@ import uuid
 app = Flask(__name__)
 
 
-# Folder upload gambar
 UPLOAD_FOLDER = "static/uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
-# File yang diperbolehkan
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
+# =========================
+# LOAD TFLITE MODEL
+# =========================
+
+interpreter = Interpreter(
+    model_path="cnn_apel.tflite"
+)
+
+interpreter.allocate_tensors()
+
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
 
-# Load model sekali saat server berjalan
-model = load_model("cnn_apel.h5", compile=False)
+# =========================
+# KELAS
+# =========================
 
-
-# Kelas hasil prediksi
 kelas = [
     "Apple___Apple_scab",
     "Apple___Black_rot",
@@ -42,7 +46,6 @@ kelas = [
 ]
 
 
-# Nama tampil di website
 nama_tampil = {
     "Apple___Apple_scab": "Apple Scab",
     "Apple___Black_rot": "Black Rot",
@@ -51,7 +54,6 @@ nama_tampil = {
 }
 
 
-# Deskripsi penyakit
 keterangan = {
     "Apple___Apple_scab":
         "Apple Scab merupakan penyakit jamur yang menyebabkan bercak hitam pada daun dan buah apel.",
@@ -68,7 +70,7 @@ keterangan = {
 
 
 def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    return "." in filename and filename.rsplit(".",1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 
@@ -94,34 +96,29 @@ def predict():
     if file.filename == "":
         return render_template(
             "index.html",
-            error="Silakan pilih gambar terlebih dahulu."
+            error="Silakan pilih gambar."
         )
 
 
     if not allowed_file(file.filename):
         return render_template(
             "index.html",
-            error="Format file tidak didukung. Gunakan PNG/JPG/JPEG."
+            error="Format file tidak didukung."
         )
 
 
-    # Hapus gambar lama agar storage tidak penuh
+    # hapus gambar lama
     files = glob.glob("static/uploads/*")
-
     for f in files:
-        try:
-            os.remove(f)
-        except:
-            pass
+        os.remove(f)
 
 
 
-    # Buat nama file unik
-    ext = file.filename.rsplit(".", 1)[1].lower()
+    ext = file.filename.rsplit(".",1)[1].lower()
 
-    filename = f"{uuid.uuid4().hex}.{ext}"
-
-    filename = secure_filename(filename)
+    filename = secure_filename(
+        f"{uuid.uuid4().hex}.{ext}"
+    )
 
 
     filepath = os.path.join(
@@ -136,7 +133,6 @@ def predict():
 
     try:
 
-        # Sesuaikan dengan ukuran input model CNN
         img = image.load_img(
             filepath,
             target_size=(128,128)
@@ -151,13 +147,25 @@ def predict():
         img = np.expand_dims(
             img,
             axis=0
+        ).astype(np.float32)
+
+
+
+        # =====================
+        # TFLITE PREDICTION
+        # =====================
+
+        interpreter.set_tensor(
+            input_details[0]["index"],
+            img
         )
 
 
-        # Prediksi
-        pred = model.predict(
-            img,
-            verbose=0
+        interpreter.invoke()
+
+
+        pred = interpreter.get_tensor(
+            output_details[0]["index"]
         )
 
 
@@ -173,11 +181,6 @@ def predict():
             float(np.max(pred)) * 100,
             2
         )
-
-
-        # Bersihkan session setelah prediksi
-        tf.keras.backend.clear_session()
-
 
 
     except Exception as e:
@@ -202,11 +205,11 @@ def predict():
 if __name__ == "__main__":
 
     port = int(
-        os.environ.get("PORT", 5000)
+        os.environ.get("PORT",5000)
     )
 
     app.run(
-        debug=False,
         host="0.0.0.0",
-        port=port
+        port=port,
+        debug=False
     )
