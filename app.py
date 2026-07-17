@@ -162,7 +162,12 @@ def home():
 
 @app.route("/history")
 def history():
-
+    page = request.args.get(
+        "page",
+        1,
+        type=int
+    )
+    
     search = request.args.get(
         "search",
         ""
@@ -173,18 +178,24 @@ def history():
 
         data = PredictionHistory.query.filter(
             PredictionHistory.hasil.contains(search)
-        ).all()
+        ).paginate(
+            page=page,
+            per_page=5
+        )
 
     else:
 
-        data = PredictionHistory.query.all()
+        data = PredictionHistory.query.paginate(
+            page=page,
+            per_page=5
+        )
 
 
 
     data_valid = []
 
 
-    for item in data:
+    for item in data.items:
 
         filepath = os.path.join(
             "static/uploads",
@@ -200,7 +211,9 @@ def history():
 
     return render_template(
         "history.html",
-        data=data_valid
+        data=data_valid,
+        pagination=data,
+        search=search
     )
 @app.route("/delete/<int:id>")
 def delete(id):
@@ -423,6 +436,30 @@ def cekdb():
 
     return hasil
 
+@app.route("/clean_history")
+def clean_history():
+
+    data = PredictionHistory.query.all()
+
+    jumlah_hapus = 0
+
+    for item in data:
+
+        filepath = os.path.join(
+            app.config["UPLOAD_FOLDER"],
+            item.gambar
+        )
+
+        if not os.path.exists(filepath):
+
+            db.session.delete(item)
+            jumlah_hapus += 1
+
+
+    db.session.commit()
+
+
+    return f"{jumlah_hapus} data history tanpa gambar berhasil dihapus"
 
 if __name__ == "__main__":
 
