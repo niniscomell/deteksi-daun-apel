@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,redirect
 from tensorflow.lite.python.interpreter import Interpreter
 from tensorflow.keras.preprocessing import image
 from werkzeug.utils import secure_filename
@@ -183,7 +183,31 @@ def history():
         "history.html",
         data=data_valid
     )
+@app.route("/delete/<int:id>")
+def delete(id):
 
+    data = PredictionHistory.query.get_or_404(id)
+
+
+    filepath = os.path.join(
+        app.config["UPLOAD_FOLDER"],
+        data.gambar
+    )
+
+
+    if os.path.exists(filepath):
+
+        os.remove(filepath)
+
+
+
+    db.session.delete(data)
+
+    db.session.commit()
+
+
+
+    return redirect("/history")
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -360,19 +384,6 @@ def predict():
 
     )
 
-with app.app_context():
-
-    data = PredictionHistory(
-        gambar="test.jpg",
-        hasil="Healthy",
-        confidence=99.5,
-        tanggal="2026-07-16"
-    )
-
-    db.session.add(data)
-    db.session.commit()
-
-    print("Data berhasil masuk database")
 
 @app.route("/cekdb")
 def cekdb():
