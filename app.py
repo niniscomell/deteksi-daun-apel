@@ -163,9 +163,26 @@ def home():
 @app.route("/history")
 def history():
 
-    data = PredictionHistory.query.all()
+    search = request.args.get(
+        "search",
+        ""
+    )
+
+
+    if search:
+
+        data = PredictionHistory.query.filter(
+            PredictionHistory.hasil.contains(search)
+        ).all()
+
+    else:
+
+        data = PredictionHistory.query.all()
+
+
 
     data_valid = []
+
 
     for item in data:
 
@@ -174,9 +191,11 @@ def history():
             item.gambar
         )
 
+
         if os.path.exists(filepath):
 
             data_valid.append(item)
+
 
 
     return render_template(

@@ -22,6 +22,7 @@
 
         }
 
+
         .card {
 
             background: #1a1d23;
@@ -34,11 +35,13 @@
 
         }
 
+
         h2, h3, h5 {
 
             color: white;
 
         }
+
 
         .text-muted {
 
@@ -46,11 +49,13 @@
 
         }
 
+
         .text-success {
 
             color: #1db954 !important;
 
         }
+
 
         .prediction-image {
 
@@ -66,6 +71,25 @@
 
         }
 
+
+        .form-control {
+
+            background: #12151b;
+
+            border: 1px solid #2a2f3a;
+
+            color: white;
+
+        }
+
+
+        .form-control::placeholder {
+
+            color: #a0a0a0;
+
+        }
+
+
         .btn-success {
 
             background: #1db954;
@@ -74,11 +98,13 @@
 
         }
 
+
         .btn-success:hover {
 
             background: #17a74a;
 
         }
+
 
         .btn-danger {
 
@@ -86,11 +112,13 @@
 
         }
 
+
         .btn-danger:hover {
 
             opacity: 0.9;
 
         }
+
 
         @media (max-width:576px){
 
@@ -102,11 +130,13 @@
 
             }
 
+
             h2 {
 
                 font-size: 24px;
 
             }
+
 
             h3 {
 
@@ -120,15 +150,22 @@
 
 </head>
 
+
 <body>
+
 
 <div class="container">
 
+
     <div class="row justify-content-center mt-4 mt-md-5">
+
 
         <div class="col-11 col-sm-8 col-md-7">
 
+
+
             <div class="text-center mb-4">
+
 
                 <h2 class="text-success">
 
@@ -136,33 +173,81 @@
 
                 </h2>
 
+
                 <p class="text-muted">
 
                     Daftar hasil deteksi penyakit daun apel sebelumnya
 
                 </p>
 
+
             </div>
+
+
+
+            <form method="GET" action="/history" class="mb-4">
+
+
+                <div class="input-group">
+
+
+                    <input 
+                        type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Cari penyakit..."
+                    >
+
+
+                    <button class="btn btn-success">
+
+                        🔎 Cari
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+
+
 
             {% if data %}
 
+
+
                 {% for item in data %}
+
+
 
                 <div class="card shadow p-4 mb-4">
 
+
+
                     <div class="text-center">
+
 
                         <img
                             src="/static/uploads/{{ item.gambar }}"
                             class="prediction-image shadow">
 
+
                     </div>
+
+
+
 
                     <h3 class="text-center mt-4 text-success">
 
                         {{ item.hasil }}
 
                     </h3>
+
+
+
 
                     <h5 class="text-center">
 
@@ -171,30 +256,49 @@
 
                     </h5>
 
+
+
+
                     <p class="text-center text-muted mt-3">
 
                         {{ item.tanggal }}
 
                     </p>
 
+
+
+
                     <div class="d-grid mt-3">
+
 
                         <a href="/delete/{{ item.id }}"
                            class="btn btn-danger">
 
+
                             🗑 Hapus
+
 
                         </a>
 
+
                     </div>
+
+
 
                 </div>
 
+
+
                 {% endfor %}
+
+
 
             {% else %}
 
+
+
                 <div class="card shadow p-4 text-center">
+
 
                     <p class="text-muted mb-0">
 
@@ -202,26 +306,44 @@
 
                     </p>
 
+
                 </div>
+
+
 
             {% endif %}
 
+
+
+
             <div class="d-grid mt-4">
+
 
                 <a href="/"
                    class="btn btn-success btn-lg">
 
+
                     Prediksi Lagi
+
 
                 </a>
 
+
             </div>
+
+
 
         </div>
 
+
+
     </div>
 
+
+
 </div>
+
+
 
 </body>
 
