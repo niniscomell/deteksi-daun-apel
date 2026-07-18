@@ -178,6 +178,8 @@ def history():
 
         data = PredictionHistory.query.filter(
             PredictionHistory.hasil.contains(search)
+        ).order_by(
+            PredictionHistory.id.desc()
         ).paginate(
             page=page,
             per_page=5
@@ -185,7 +187,9 @@ def history():
 
     else:
 
-        data = PredictionHistory.query.paginate(
+        data = PredictionHistory.query.order_by(
+            PredictionHistory.id.desc()
+        ).paginate(
             page=page,
             per_page=5
         )
