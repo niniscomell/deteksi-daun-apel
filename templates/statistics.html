@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Statistik Prediksi</title>
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<style>
+
+
+body{
+
+    background:#0f1115;
+    min-height:100vh;
+    font-family:"Segoe UI", Arial, sans-serif;
+
+}
+
+
+.container{
+
+    max-width:1100px;
+
+}
+
+
+/* HEADER */
+
+.header-title{
+
+    color:#ffffff;
+    font-weight:700;
+    letter-spacing:.5px;
+
+}
+
+
+.header-desc{
+
+    color:#d0d3d8;
+    font-size:15px;
+
+}
+
+
+
+/* CARD */
+
+
+.card-stat{
+
+
+    background:
+    linear-gradient(
+        145deg,
+        #1b1f27,
+        #15181e
+    );
+
+
+    border:1px solid #2b303a;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    transition:.3s;
+
+
+}
+
+
+
+.card-stat:hover{
+
+    transform:translateY(-4px);
+
+    border-color:#1db954;
+
+}
+
+
+
+
+.card-title{
+
+
+    color:#d0d3d8;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+
+
+.card-value{
+
+
+    color:#1db954;
+
+    font-size:36px;
+
+    font-weight:700;
+
+}
+
+
+
+.total-value{
+
+    font-size:55px;
+
+}
+
+
+
+
+
+/* CONFIDENCE */
+
+
+.confidence{
+
+    color:white;
+
+    font-size:45px;
+
+    font-weight:700;
+
+}
+
+
+.confidence span{
+
+    color:#1db954;
+
+}
+
+
+
+
+
+/* CHART */
+
+
+.chart-card{
+
+
+    background:#161a20;
+
+    border:1px solid #2b303a;
+
+    border-radius:18px;
+
+    padding:25px;
+
+
+}
+
+
+
+.chart-title{
+
+
+    color:white;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    margin-bottom:20px;
+
+
+}
+
+
+
+.chart-box{
+
+    height:320px;
+
+}
+
+
+
+
+
+/* BUTTON */
+
+
+.btn-dashboard{
+
+
+    background:#12151b;
+
+    color:#ffffff;
+
+    border:1px solid #303641;
+
+    border-radius:10px;
+
+    padding:8px 22px;
+
+
+}
+
+
+
+.btn-dashboard:hover{
+
+
+    background:#1db954;
+
+    border-color:#1db954;
+
+    color:white;
+
+
+}
+
+
+
+
+
+@media(max-width:576px){
+
+
+.total-value{
+
+    font-size:42px;
+
+}
+
+
+.confidence{
+
+    font-size:35px;
+
+}
+
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+
+
+<body>
+
+
+<div class="container py-5">
+
+
+
+<div class="text-center mb-5">
+
+
+<h2 class="header-title">
+
+📊 Statistik Prediksi
+
+</h2>
+
+
+<p class="header-desc">
+
+Ringkasan hasil klasifikasi penyakit daun apel menggunakan CNN
+
+</p>
+
+
+
+<a href="/"
+class="btn btn-dashboard">
+
+🏠 Dashboard
+
+</a>
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- TOTAL -->
+
+<div class="card-stat text-center mb-4">
+
+
+<div class="card-title">
+
+Total Prediksi
+
+</div>
+
+
+<div class="card-value total-value">
+
+{{ total }}
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- CLASS STAT -->
+
+<div class="row g-4 mb-4">
+
+
+<div class="col-6 col-md-3">
+
+<div class="card-stat">
+
+
+<div class="card-title">
+
+Healthy
+
+</div>
+
+
+<div class="card-value">
+
+{{ healthy }}
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="col-6 col-md-3">
+
+<div class="card-stat">
+
+
+<div class="card-title">
+
+Apple Scab
+
+</div>
+
+
+<div class="card-value">
+
+{{ scab }}
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="col-6 col-md-3">
+
+<div class="card-stat">
+
+
+<div class="card-title">
+
+Black Rot
+
+</div>
+
+
+<div class="card-value">
+
+{{ black_rot }}
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="col-6 col-md-3">
+
+<div class="card-stat">
+
+
+<div class="card-title">
+
+Cedar Rust
+
+</div>
+
+
+<div class="card-value">
+
+{{ rust }}
+
+</div>
+
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- CONFIDENCE -->
+
+
+<div class="card-stat text-center mb-5">
+
+
+<div class="card-title">
+
+Confidence Rata-rata Model
+
+</div>
+
+
+
+<div class="confidence">
+
+{{ avg_confidence }}
+
+<span>%</span>
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- BAR -->
+
+<div class="chart-card mb-4">
+
+
+<div class="chart-title">
+
+📈 Jumlah Prediksi Penyakit
+
+</div>
+
+
+
+<div class="chart-box">
+
+<canvas id="barChart"></canvas>
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- PIE -->
+
+
+<div class="chart-card">
+
+
+<div class="chart-title">
+
+🥧 Distribusi Penyakit
+
+</div>
+
+
+
+<div class="chart-box">
+
+<canvas id="pieChart"></canvas>
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<script>
+
+
+Chart.defaults.color="#ffffff";
+
+Chart.defaults.borderColor="#303641";
+
+
+Chart.defaults.font.family="Segoe UI, Arial, sans-serif";
+
+Chart.defaults.font.size=14;
+
+Chart.defaults.font.weight="600";
+
+
+
+
+const labels=[
+
+"Healthy",
+
+"Apple Scab",
+
+"Black Rot",
+
+"Cedar Apple Rust"
+
+];
+
+
+
+const values=[
+
+{{healthy}},
+
+{{scab}},
+
+{{black_rot}},
+
+{{rust}}
+
+];
+
+
+
+
+
+
+
+
+// BAR CHART
+
+
+new Chart(
+
+document.getElementById("barChart"),
+
+{
+
+
+type:"bar",
+
+
+data:{
+
+
+labels:labels,
+
+
+datasets:[{
+
+label:"Jumlah Prediksi",
+
+data:values,
+
+backgroundColor:"#1db954",
+
+borderRadius:8
+
+}]
+
+
+},
+
+
+
+options:{
+
+
+responsive:true,
+
+maintainAspectRatio:false,
+
+
+plugins:{
+
+
+legend:{
+
+
+display:false
+
+
+}
+
+
+},
+
+
+
+scales:{
+
+
+
+x:{
+
+
+ticks:{
+
+
+color:"#ffffff",
+
+
+font:{
+
+
+size:14,
+
+weight:"700"
+
+
+}
+
+
+}
+
+
+},
+
+
+
+y:{
+
+
+beginAtZero:true,
+
+
+ticks:{
+
+
+color:"#ffffff",
+
+
+font:{
+
+
+size:13,
+
+weight:"700"
+
+
+},
+
+
+stepSize:1
+
+
+}
+
+
+
+}
+
+
+
+}
+
+
+
+}
+
+
+
+}
+
+
+);
+
+
+
+
+
+
+
+
+
+
+
+
+// PIE CHART
+
+
+
+new Chart(
+
+document.getElementById("pieChart"),
+
+{
+
+
+type:"doughnut",
+
+
+
+data:{
+
+
+labels:labels,
+
+
+datasets:[{
+
+
+data:values,
+
+
+backgroundColor:[
+
+"#1db954",
+
+"#3498db",
+
+"#e74c3c",
+
+"#f1c40f"
+
+],
+
+
+borderWidth:2
+
+
+}]
+
+
+},
+
+
+
+
+options:{
+
+
+responsive:true,
+
+
+maintainAspectRatio:false,
+
+
+plugins:{
+
+
+legend:{
+
+
+position:"bottom",
+
+
+
+labels:{
+
+
+color:"#ffffff",
+
+
+font:{
+
+
+size:13,
+
+weight:"700"
+
+
+}
+
+
+
+}
+
+
+
+}
+
+
+
+}
+
+
+
+}
+
+
+
+}
+
+
+
+);
+
+
+
+
+</script>
+
+
+
+</body>
+
+</html>

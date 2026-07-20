@@ -56,6 +56,19 @@
             color: #d1d1d1;
         }
 
+        /* Style khusus tombol History & Statistik */
+        .btn-outline-nav {
+            background: #12151b;
+            border: 1px solid #2a2f3a;
+            color: #d1d1d1;
+        }
+
+        .btn-outline-nav:hover {
+            background: #1db954;
+            border-color: #1db954;
+            color: white;
+        }
+
 
         /* Responsive HP */
         @media (max-width: 576px) {
@@ -111,6 +124,21 @@
                 <p class="text-center text-muted mb-4">
                     Klasifikasi penyakit daun apel menggunakan CNN
                 </p>
+
+
+                <!-- Tombol History & Statistik -->
+                <div class="d-flex justify-content-center gap-2 mb-4">
+
+                    <a href="/history" class="btn btn-outline-nav btn-sm px-3">
+                        📁 History
+                    </a>
+
+                    <a href="/statistics" class="btn btn-outline-nav btn-sm px-3">
+                        📊 Statistik
+                    </a>
+
+                </div>
+                <!-- End Tombol History & Statistik -->
 
 
 

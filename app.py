@@ -420,7 +420,70 @@ def predict():
 
     )
 
+# =========================
+# STATISTICS
+# =========================
 
+@app.route("/statistics")
+def statistics():
+
+    total = PredictionHistory.query.count()
+
+
+    healthy = PredictionHistory.query.filter_by(
+        hasil="Healthy"
+    ).count()
+
+
+    scab = PredictionHistory.query.filter_by(
+        hasil="Apple Scab"
+    ).count()
+
+
+    black_rot = PredictionHistory.query.filter_by(
+        hasil="Black Rot"
+    ).count()
+
+
+    rust = PredictionHistory.query.filter_by(
+        hasil="Cedar Apple Rust"
+    ).count()
+
+
+
+    avg_confidence = db.session.query(
+        db.func.avg(
+            PredictionHistory.confidence
+        )
+    ).scalar()
+
+
+
+    if avg_confidence:
+        avg_confidence = round(
+            avg_confidence,
+            2
+        )
+    else:
+        avg_confidence = 0
+
+
+
+    return render_template(
+        "statistics.html",
+
+        total=total,
+
+        healthy=healthy,
+
+        scab=scab,
+
+        black_rot=black_rot,
+
+        rust=rust,
+
+        avg_confidence=avg_confidence
+    )
 @app.route("/cekdb")
 def cekdb():
 
