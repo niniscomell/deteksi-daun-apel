@@ -18,11 +18,19 @@ app = Flask(__name__)
 # =========================
 import os
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+db_url = os.environ.get(
     "DATABASE_URL",
     "sqlite:///database.db"
 )
+
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Kalau pakai PostgreSQL (pg8000), aktifkan SSL lewat kode (bukan lewat URL)
+if db_url.startswith("postgresql+pg8000"):
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "connect_args": {"ssl_context": True}
+    }
 
 db = SQLAlchemy(app)
 
