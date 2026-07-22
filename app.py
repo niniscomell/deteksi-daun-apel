@@ -26,10 +26,14 @@ db_url = os.environ.get(
 app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# Kalau pakai PostgreSQL (pg8000), aktifkan SSL lewat kode (bukan lewat URL)
+# Kalau pakai PostgreSQL (pg8000), aktifkan SSL + auto-reconnect
+# (pool_pre_ping & pool_recycle mencegah error "network error" saat
+# Neon auto-suspend karena idle, dengan cara ngecek/reconnect koneksi)
 if db_url.startswith("postgresql+pg8000"):
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-        "connect_args": {"ssl_context": True}
+        "connect_args": {"ssl_context": True},
+        "pool_pre_ping": True,
+        "pool_recycle": 280
     }
 
 db = SQLAlchemy(app)
